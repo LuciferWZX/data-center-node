@@ -17,6 +17,7 @@ import { User } from './interfaces/user.interface';
 import { nanoid } from 'nanoid';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from '../auth/auth.service';
+import { encryption } from '../common/utils/utilKid';
 
 @Controller(ControllerPrefix.user)
 export class UserController {
@@ -29,11 +30,13 @@ export class UserController {
   async login(@Request() req): Promise<RestRes<User>> {
     console.log('用户登录：', req.user);
     const { token } = await this.authService.login(req.user);
+    const user = {
+      ...req.user,
+      token,
+    };
+    await this.userService.addCachedUsers(user);
     return {
-      data: {
-        ...req.user,
-        token,
-      },
+      data: user,
       msg: '登录成功',
     };
   }
@@ -43,7 +46,6 @@ export class UserController {
     console.log(`查询的用户id:${uid}`);
     const user: User | undefined = await this.userService.findOneById(uid);
     if (user) {
-      delete user.password;
       return {
         data: user,
       };
@@ -59,9 +61,11 @@ export class UserController {
     @Body() createUserDto: CreateUserDto,
   ): Promise<RestRes<User>> {
     console.log('新增了用户:', createUserDto);
+    const password = encryption(createUserDto.password);
     const user: User = {
       ...createUserDto,
       id: nanoid(),
+      password,
       createTime: '202002200222',
       updateTime: '202002200222',
     };
@@ -85,7 +89,7 @@ export class UserController {
   @Get()
   async findAll(): Promise<RestRes<User[]>> {
     return {
-      data: this.userService.findAll(),
+      data: this.userService.findAll({ fromCache: true }),
       msg: '查询成功',
     };
   }

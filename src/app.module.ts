@@ -4,8 +4,8 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { ControllerPrefix } from './common/types/controller';
 import { UserController } from './user/user.controller';
-import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { AuthModule } from './auth/auth.module';
+import { VerifyTokenMiddleware } from './common/middlewares/verifyToken.middleware';
 
 @Module({
   imports: [AuthModule, UserModule],
@@ -15,7 +15,7 @@ import { AuthModule } from './auth/auth.module';
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): any {
     consumer
-      .apply(LoggerMiddleware)
+      .apply(VerifyTokenMiddleware)
       .exclude(
         `${ControllerPrefix.user}/create`,
         `${ControllerPrefix.user}/login`,

@@ -17,7 +17,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     response.status(status).json({
       code: _response.code || 10000,
       msg: _response.msg,
-      data: request.url,
+      data: _response.data === undefined ? request.url : _response.data,
     });
   }
 }
