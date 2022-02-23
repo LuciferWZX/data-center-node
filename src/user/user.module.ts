@@ -1,16 +1,20 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { JwtModule } from '@nestjs/jwt';
-import { JWTCONSTANTS } from '../auth/constants';
+import { JWT_CONSTANTS } from '../auth/constants';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserEntity } from '../entity/user.entity';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([UserEntity]),
     JwtModule.register({
-      secret: JWTCONSTANTS.secret,
-      signOptions: { expiresIn: JWTCONSTANTS.expiresIn },
+      secret: JWT_CONSTANTS.secret,
+      signOptions: { expiresIn: JWT_CONSTANTS.expiresIn },
     }),
+    CacheModule.register(),
   ],
   controllers: [UserController],
   providers: [UserService, AuthService],

@@ -12,6 +12,5 @@ export async function validatePassword(
 ): Promise<boolean> {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const bcrypt = require('bcryptjs');
-  console.log({ password, hashPassword });
   return await bcrypt.compare(password, hashPassword);
 }

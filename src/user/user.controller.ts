@@ -25,21 +25,38 @@ export class UserController {
     private userService: UserService,
     private readonly authService: AuthService,
   ) {}
+
+  //注册
+  @Post('create')
+  async createUser(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<RestRes<any>> {
+    const password = encryption(createUserDto.password);
+    const result = await this.userService.create({
+      ...createUserDto,
+      password,
+    });
+    return {
+      data: result,
+      msg: '注册成功!',
+    };
+  }
+  //登录
   @UseGuards(AuthGuard('local'))
   @Post('login')
   async login(@Request() req): Promise<RestRes<User>> {
-    console.log('用户登录：', req.user);
     const { token } = await this.authService.login(req.user);
     const user = {
       ...req.user,
       token,
     };
-    await this.userService.addCachedUsers(user);
+    await this.userService.setCache(user);
     return {
       data: user,
       msg: '登录成功',
     };
   }
+
   //查询
   @Get(':id')
   async getUserInfo(@Param('id') uid: string): Promise<RestRes<User>> {
@@ -54,25 +71,6 @@ export class UserController {
       { msg: '该用户不存在', code: 10000 },
       HttpStatus.BAD_REQUEST,
     );
-  }
-  //新建
-  @Post('create')
-  async createUser(
-    @Body() createUserDto: CreateUserDto,
-  ): Promise<RestRes<User>> {
-    console.log('新增了用户:', createUserDto);
-    const password = encryption(createUserDto.password);
-    const user: User = {
-      ...createUserDto,
-      id: nanoid(),
-      password,
-      createTime: '202002200222',
-      updateTime: '202002200222',
-    };
-    this.userService.create(user);
-    return {
-      data: user,
-    };
   }
   //更新
   @Post('update')

@@ -2,7 +2,8 @@ interface JWTConstants {
   secret: string;
   expiresIn: string;
 }
-export const JWTCONSTANTS: JWTConstants = {
+export const ExpiresInSeconds = 60 * 30;
+export const JWT_CONSTANTS: JWTConstants = {
   secret: 'wzx_secret',
-  expiresIn: '60s',
+  expiresIn: `${ExpiresInSeconds}s`,
 };

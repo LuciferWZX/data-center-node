@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import { User } from '../user/interfaces/user.interface';
-import { JWTCONSTANTS } from './constants';
+import { JWT_CONSTANTS } from './constants';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +13,8 @@ export class AuthService {
 
   //用户登录时查看用户的账户密码是否正确
   async validateUser(username: string, password: string): Promise<User | null> {
-    return await this.userService.findOneByPassword(username, password);
+    return await this.userService.upLogin(username, password);
+    //return await this.userService.findOneByPassword(username, password);
   }
   //用户登录之后生成token
   async login(user: User): Promise<{ token: string }> {
@@ -37,7 +38,7 @@ export class AuthService {
     let isLogin = true;
     try {
       const { sub } = await this.jwtService.verify(token, {
-        secret: JWTCONSTANTS.secret,
+        secret: JWT_CONSTANTS.secret,
       });
       console.log('检查出来的sub', sub);
       //通过上面解析出来的id去缓存里面去查询用户，然后比较token是否一样是的话说明是最新的token
