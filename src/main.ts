@@ -11,6 +11,7 @@ async function bootstrap() {
   app.useGlobalFilters(new SqlExceptionFilter()); //全局SQL异常处理
   app.useGlobalInterceptors(new TransformInterceptor()); //全局响应拦截器
   app.useGlobalGuards(new RolesGuard()); //全局拦截被删除的用户使用api
+  app.setGlobalPrefix('api/v1');
   await app.listen(3000);
 }
 bootstrap().then(() => {

@@ -43,7 +43,7 @@ export class AuthService {
       console.log('检查出来的sub', sub);
       //通过上面解析出来的id去缓存里面去查询用户，然后比较token是否一样是的话说明是最新的token
       //否则目前的是最老的token
-      const user = await this.userService.findOneById(sub, { fromCache: true });
+      const user = await this.userService.findOneById(sub);
       if (!user || user.token !== token) {
         isLogin = false;
       }

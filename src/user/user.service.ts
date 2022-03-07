@@ -41,15 +41,16 @@ export class UserService {
     return this.dataUsers;
   }
   //通过id查询用户
-  async findOneById(
-    id: string,
-    options?: { fromCache?: boolean },
-  ): Promise<User | undefined> {
-    if (options?.fromCache) {
-      //是否从缓存获取
-      return this.users.find((user) => user.id === id);
-    }
-    return this.dataUsers.find((user) => user.id === id);
+  async findOneById(id: string): Promise<User | undefined> {
+    return this.userMap.get(id);
+    // if (options?.fromCache) {
+    //   const user = this.users.find((user) => user.id === id);
+    //   //找到用户则返回，没找到就去库里面找
+    //   if (user) {
+    //     return this.users.find((user) => user.id === id);
+    //   }
+    // }
+    // return this.dataUsers.find((user) => user.id === id);
   }
   //用户名密码登录
   async upLogin(username: string, password: string): Promise<User | undefined> {

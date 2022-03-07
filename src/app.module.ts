@@ -1,9 +1,4 @@
-import {
-  CacheModule,
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-} from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
@@ -13,7 +8,8 @@ import { AuthModule } from './auth/auth.module';
 import { VerifyTokenMiddleware } from './common/middlewares/verifyToken.middleware';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import mysqlConfig from './databases/mysql.config';
-import { Connection } from 'typeorm';
+// import { Connection } from 'typeorm';
+import { GLOBAL_API_PREFIX } from './common/types/constant';
 
 @Module({
   imports: [AuthModule, UserModule, TypeOrmModule.forRoot(mysqlConfig)],
@@ -21,13 +17,13 @@ import { Connection } from 'typeorm';
   providers: [AppService],
 })
 export class AppModule implements NestModule {
-  constructor(private readonly connection: Connection) {}
+  //private readonly connection: Connection
   configure(consumer: MiddlewareConsumer): any {
     consumer
       .apply(VerifyTokenMiddleware)
       .exclude(
-        `${ControllerPrefix.user}/create`,
-        `${ControllerPrefix.user}/login`,
+        `${GLOBAL_API_PREFIX}/${ControllerPrefix.user}/create`,
+        `${GLOBAL_API_PREFIX}/${ControllerPrefix.user}/login`,
       )
       .forRoutes(UserController);
   }
